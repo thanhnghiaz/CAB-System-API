@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.04 Driver Ranking API
+  version: 1.0.0
+  description: Sắp xếp tài xế phù hợp theo tiêu chí nghiệp vụ, ưu tiên tài xế có đánh giá cao.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /drivers/ranked:
+    get:
+      summary: Xếp hạng tài xế
+      operationId: getRankedDrivers
+      responses:
+        '200':
+          description: Danh sách tài xế đã được xếp hạng
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RankedDriver'
+              example:
+                - driverId: DRV001
+                  rating: 4.9
+                  rank: 1
+                - driverId: DRV002
+                  rating: 4.7
+                  rank: 2
+components:
+  schemas:
+    RankedDriver:
+      type: object
+      properties:
+        driverId:
+          type: string
+          example: DRV001
+        rating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+          example: 4.9
+        rank:
+          type: integer
+          example: 1
