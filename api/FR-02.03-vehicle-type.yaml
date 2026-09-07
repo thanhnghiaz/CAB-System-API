@@ -1,50 +1,52 @@
 openapi: 3.0.3
 info:
-  title: CAB System - FR-02.02 Driver Availability API
+  title: CAB System - FR-02.03 Vehicle Type Matching API
   version: 1.0.0
-  description: Hệ thống chỉ gửi yêu cầu chuyến đến tài xế có trạng thái AVAILABLE.
+  description: Chỉ đề xuất tài xế có loại xe phù hợp với yêu cầu của khách hàng.
 servers:
   - url: http://localhost:8080/api/v1
 paths:
-  /drivers/available:
+  /drivers/by-vehicle-type:
     get:
-      summary: Kiểm tra trạng thái tài xế
-      operationId: getAvailableDrivers
+      summary: Kiểm tra loại xe của tài xế
+      operationId: getDriversByVehicleType
+      parameters:
+        - name: vehicleType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [MOTORBIKE, CAR_4_SEAT, CAR_7_SEAT]
+          example: CAR_4_SEAT
       responses:
         '200':
-          description: Danh sách tài xế AVAILABLE
+          description: Danh sách tài xế có loại xe phù hợp
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AvailableDriver'
+                  $ref: '#/components/schemas/DriverVehicle'
               example:
                 - driverId: DRV001
-                  driverName: Nguyễn Văn A
-                  status: AVAILABLE
-        '404':
-          description: Không có tài xế AVAILABLE
+                  vehicleType: CAR_4_SEAT
+        '400':
+          description: Loại xe không hợp lệ
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    AvailableDriver:
+    DriverVehicle:
       type: object
-      required: [driverId, status]
       properties:
         driverId:
           type: string
           example: DRV001
-        driverName:
+        vehicleType:
           type: string
-          example: Nguyễn Văn A
-        status:
-          type: string
-          enum: [AVAILABLE]
-          example: AVAILABLE
+          example: CAR_4_SEAT
 
     ErrorResponse:
       type: object
