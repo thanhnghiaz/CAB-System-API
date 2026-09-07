@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.08 Driver Reject API
+  version: 1.0.0
+  description: Khi tài xế từ chối, hệ thống tiếp tục tìm và gửi yêu cầu đến tài xế phù hợp tiếp theo.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /dispatch-requests/{requestId}/reject:
+    post:
+      summary: Xử lý tài xế từ chối chuyến
+      operationId: rejectTripRequest
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: DREQ001
+      responses:
+        '200':
+          description: Đã ghi nhận từ chối và chuyển sang tìm tài xế tiếp theo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RejectResult'
+              example:
+                requestId: DREQ001
+                status: REJECTED
+                nextAction: FIND_NEXT_DRIVER
+        '404':
+          description: Không tìm thấy yêu cầu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    RejectResult:
+      type: object
+      properties:
+        requestId:
+          type: string
+        status:
+          type: string
+          enum: [REJECTED]
+        nextAction:
+          type: string
+          enum: [FIND_NEXT_DRIVER]
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
