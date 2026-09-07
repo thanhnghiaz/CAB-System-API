@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.06 Send Trip Request API
+  version: 1.0.0
+  description: Gửi yêu cầu nhận chuyến đến tài xế được ưu tiên.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /dispatch-requests:
+    post:
+      summary: Gửi yêu cầu nhận chuyến
+      operationId: sendTripRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispatchRequestInput'
+            example:
+              bookingId: BKG001
+              driverId: DRV001
+      responses:
+        '201':
+          description: Yêu cầu nhận chuyến đã được gửi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchRequest'
+        '400':
+          description: Dữ liệu không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    DispatchRequestInput:
+      type: object
+      required: [bookingId, driverId]
+      properties:
+        bookingId:
+          type: string
+        driverId:
+          type: string
+    DispatchRequest:
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: DREQ001
+        bookingId:
+          type: string
+          example: BKG001
+        driverId:
+          type: string
+          example: DRV001
+        status:
+          type: string
+          enum: [PENDING]
+          example: PENDING
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
