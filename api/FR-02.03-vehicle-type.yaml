@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.03 Vehicle Type Matching API
+  version: 1.0.0
+  description: Chỉ đề xuất tài xế có loại xe phù hợp với yêu cầu của khách hàng.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /drivers/by-vehicle-type:
+    get:
+      summary: Kiểm tra loại xe của tài xế
+      operationId: getDriversByVehicleType
+      parameters:
+        - name: vehicleType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [MOTORBIKE, CAR_4_SEAT, CAR_7_SEAT]
+          example: CAR_4_SEAT
+      responses:
+        '200':
+          description: Danh sách tài xế có loại xe phù hợp
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverVehicle'
+              example:
+                - driverId: DRV001
+                  vehicleType: CAR_4_SEAT
+        '400':
+          description: Loại xe không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    DriverVehicle:
+      type: object
+      properties:
+        driverId:
+          type: string
+          example: DRV001
+        vehicleType:
+          type: string
+          example: CAR_4_SEAT
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
