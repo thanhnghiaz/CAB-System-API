@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.11 Driver Not Found API
+  version: 1.0.0
+  description: Nếu không tìm được tài xế phù hợp, hệ thống thông báo cho khách hàng và cập nhật trạng thái chuyến tương ứng.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /bookings/{bookingId}/driver-not-found:
+    post:
+      summary: Xử lý không tìm được tài xế
+      operationId: markDriverNotFound
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: BKG001
+      responses:
+        '200':
+          description: Đã cập nhật trạng thái và ghi nhận thông báo cho khách hàng
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverNotFoundResult'
+              example:
+                bookingId: BKG001
+                status: DRIVER_NOT_FOUND
+                customerNotification: Không tìm được tài xế phù hợp
+        '404':
+          description: Không tìm thấy Booking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    DriverNotFoundResult:
+      type: object
+      properties:
+        bookingId:
+          type: string
+        status:
+          type: string
+          enum: [DRIVER_NOT_FOUND]
+        customerNotification:
+          type: string
+          example: Không tìm được tài xế phù hợp
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
