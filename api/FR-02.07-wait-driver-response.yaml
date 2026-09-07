@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.07 Wait Driver Response API
+  version: 1.0.0
+  description: Hệ thống chờ tài xế phản hồi yêu cầu nhận chuyến trong thời gian được quy định.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /dispatch-requests/{requestId}:
+    get:
+      summary: Kiểm tra trạng thái chờ tài xế xác nhận
+      operationId: getDispatchRequestStatus
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: DREQ001
+      responses:
+        '200':
+          description: Trạng thái yêu cầu nhận chuyến
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchStatus'
+              example:
+                requestId: DREQ001
+                status: PENDING
+        '404':
+          description: Không tìm thấy yêu cầu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    DispatchStatus:
+      type: object
+      properties:
+        requestId:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, ACCEPTED, REJECTED, TIMEOUT]
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
