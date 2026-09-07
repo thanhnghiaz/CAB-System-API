@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.01 Driver Location API
+  version: 1.0.0
+  description: Xác định vị trí hiện tại của các tài xế đang hoạt động để phục vụ tìm kiếm tài xế phù hợp.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /drivers/locations:
+    get:
+      summary: Xác định vị trí tài xế
+      operationId: getDriverLocations
+      responses:
+        '200':
+          description: Lấy vị trí tài xế thành công
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverLocation'
+              example:
+                - driverId: DRV001
+                  latitude: 10.825
+                  longitude: 106.631
+                - driverId: DRV002
+                  latitude: 10.827
+                  longitude: 106.635
+        '500':
+          description: Lỗi hệ thống
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    DriverLocation:
+      type: object
+      required: [driverId, latitude, longitude]
+      properties:
+        driverId:
+          type: string
+          example: DRV001
+        latitude:
+          type: number
+          format: double
+          example: 10.825
+        longitude:
+          type: number
+          format: double
+          example: 106.631
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
