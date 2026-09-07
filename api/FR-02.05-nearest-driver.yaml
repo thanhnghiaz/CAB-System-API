@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.05 Nearest Driver API
+  version: 1.0.0
+  description: Ưu tiên tài xế phù hợp có vị trí gần điểm đón của khách hàng.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /drivers/nearest:
+    get:
+      summary: Ưu tiên tài xế gần khách hàng
+      operationId: getNearestDrivers
+      parameters:
+        - name: pickupLatitude
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+          example: 10.8231
+        - name: pickupLongitude
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+          example: 106.6297
+      responses:
+        '200':
+          description: Danh sách tài xế theo thứ tự gần điểm đón
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NearbyDriver'
+              example:
+                - driverId: DRV001
+                  distanceKm: 0.8
+                - driverId: DRV002
+                  distanceKm: 1.5
+components:
+  schemas:
+    NearbyDriver:
+      type: object
+      properties:
+        driverId:
+          type: string
+          example: DRV001
+        distanceKm:
+          type: number
+          format: double
+          example: 0.8
