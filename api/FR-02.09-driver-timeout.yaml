@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: CAB System - FR-02.09 Driver Timeout API
+  version: 1.0.0
+  description: Nếu tài xế không phản hồi trong thời gian quy định, yêu cầu bị timeout và hệ thống tìm tài xế khác.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /dispatch-requests/{requestId}/timeout:
+    post:
+      summary: Xử lý tài xế không phản hồi
+      operationId: timeoutTripRequest
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: DREQ001
+      responses:
+        '200':
+          description: Yêu cầu đã timeout và hệ thống chuyển sang tìm tài xế khác
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeoutResult'
+              example:
+                requestId: DREQ001
+                status: TIMEOUT
+                nextAction: FIND_NEXT_DRIVER
+        '404':
+          description: Không tìm thấy yêu cầu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    TimeoutResult:
+      type: object
+      properties:
+        requestId:
+          type: string
+        status:
+          type: string
+          enum: [TIMEOUT]
+        nextAction:
+          type: string
+          enum: [FIND_NEXT_DRIVER]
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Dữ liệu yêu cầu không hợp lệ
